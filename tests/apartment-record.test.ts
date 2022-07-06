@@ -7,7 +7,7 @@ const defObject = {
     lat: 19,
     lon: 12,
     price: 10,
-    staticSiteUrl: '24213423423',
+    mainImgLink: '24213423423',
 };
 
 test('Can build AdRecord', ()=>{

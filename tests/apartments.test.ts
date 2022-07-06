@@ -5,7 +5,7 @@ import {ApartmentEntity} from "../types";
 const defaultObj = {
     name: 'Test Name',
     descriptionShort: 'blah',
-    staticSiteUrl: 'aaa',
+    mainImgLink: 'aaa',
     price: 10,
     lat: 9,
     lon: 9,

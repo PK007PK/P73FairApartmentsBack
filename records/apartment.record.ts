@@ -9,7 +9,7 @@ type ApartmentRecordResults = [ApartmentEntity[], FieldPacket[]];
 export class ApartmentRecord implements ApartmentEntity {
     public id: string;
     public name: string;
-    public staticSiteUrl: string;
+    public mainImgLink?: string;
     public descriptionShort: string;
     public price: number;
     public lat: number;
@@ -29,9 +29,9 @@ export class ApartmentRecord implements ApartmentEntity {
         }
 
         // @TODO: Check if URL is valid!
-        if (!obj.staticSiteUrl || obj.staticSiteUrl.length > 100) {
-            throw new ValidationError('Link ogłoszenia nie może być pusty, ani przekraczać 100 znaków.');
-        }
+        // if (!obj.mainImgLink || obj.mainImgLink.length > 150) {
+        //     throw new ValidationError('Link do obrazka nie może być pusty, ani przekraczać 150 znaków.');
+        // }
 
         if (typeof obj.lat !== 'number' || typeof obj.lon !== 'number') {
             throw new ValidationError('Nie można zlokalizować ogłoszenia.');
@@ -41,7 +41,7 @@ export class ApartmentRecord implements ApartmentEntity {
         this.name = obj.name;
         this.descriptionShort = obj.descriptionShort;
         this.price = obj.price;
-        this.staticSiteUrl = obj.staticSiteUrl;
+        this.mainImgLink = obj.mainImgLink;
         this.lat = obj.lat;
         this.lon = obj.lon;
     }
@@ -61,11 +61,11 @@ export class ApartmentRecord implements ApartmentEntity {
 
         return results.map(result => {
             const {
-                id, name, lat, lon, price, descriptionShort, staticSiteUrl
+                id, name, lat, lon, price, descriptionShort, mainImgLink
             } = result;
 
             return {
-                id, name, lat, lon, price, descriptionShort, staticSiteUrl
+                id, name, lat, lon, price, descriptionShort, mainImgLink
             };
         });
     }
@@ -77,6 +77,24 @@ export class ApartmentRecord implements ApartmentEntity {
             throw new Error('Cannot insert something that is already inserted!');
         }
 
-        await pool.execute("INSERT INTO `apartments`(`id`, `name`, `descriptionShort`, `price`, `staticSiteUrl`, `lat`, `lon`) VALUES(:id, :name, :descriptionShort, :price, :staticSiteUrl, :lat, :lon)", this);
+        await pool.execute("INSERT INTO `apartments`(`id`, `name`, `descriptionShort`, `price`, `mainImgLink`, `lat`, `lon`) VALUES(:id, :name, :descriptionShort, :price, :mainImgLink, :lat, :lon)", this);
+    }
+
+    async edit(): Promise<void> {
+        await pool.execute("UPDATE `apartments` SET `name` = :name, `descriptionShort` = :descriptionShort, `price` = :price, `mainImgLink` = :mainImgLink, `lat` = :lat, `lon` = :lon WHERE `id` = :id", {
+            id: this.id,
+            name: this.name,
+            descriptionShort: this.descriptionShort,
+            price: this.price,
+            mainImgLink: this.mainImgLink,
+            lat: this.lat,
+            lon: this.lon,
+        });
+    }
+
+    async delete(): Promise<void> {
+        await pool.execute("DELETE FROM `apartments` WHERE `id` = :id", {
+            id: this.id,
+        });
     }
 }
