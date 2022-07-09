@@ -28,12 +28,7 @@ export class ApartmentRecord implements ApartmentEntity {
             throw new ValidationError('Cena nie może być mniejsza niż 0 lub większa niż 9 999 999.');
         }
 
-        // @TODO: Check if URL is valid!
-        // if (!obj.mainImgLink || obj.mainImgLink.length > 150) {
-        //     throw new ValidationError('Link do obrazka nie może być pusty, ani przekraczać 150 znaków.');
-        // }
-
-        if (typeof obj.lat !== 'number' || typeof obj.lon !== 'number') {
+         if (typeof obj.lat !== 'number' || typeof obj.lon !== 'number') {
             throw new ValidationError('Nie można zlokalizować ogłoszenia.');
         }
 
@@ -92,9 +87,12 @@ export class ApartmentRecord implements ApartmentEntity {
         });
     }
 
-    async delete(): Promise<void> {
+    async delete(): Promise<{}> {
         await pool.execute("DELETE FROM `apartments` WHERE `id` = :id", {
             id: this.id,
         });
+        return {
+            isDeleted: true,
+        }
     }
 }
