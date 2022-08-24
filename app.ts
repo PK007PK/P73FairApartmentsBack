@@ -9,7 +9,7 @@ import {config} from "./config/config";
 const app = express();
 
 app.use(cors({
-    origin: config.corsOrigin,
+    origin: 'http://localhost:3001',
 }));
 app.use(json());
 app.use(rateLimit({
@@ -23,7 +23,7 @@ router.use('/apartment', apartmentRouter);
 
 app.use('/api', router);
 
-app.use(handleError);
+// app.use(handleError);
 
 app.listen(3001, '0.0.0.0', () => {
     console.log('Listening on port http://localhost:3001');

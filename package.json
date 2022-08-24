@@ -1,11 +1,11 @@
 {
-  "name": "mega-ads-back",
+  "name": "FairApartments",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.ts",
   "scripts": {
-    "start": "ts-node index.ts",
-    "start:dev": "tsnd index.ts",
+    "start": "ts-node app.ts",
+    "start:dev": "tsnd app.ts",
     "build": "tsc",
     "test": "jest"
   },
