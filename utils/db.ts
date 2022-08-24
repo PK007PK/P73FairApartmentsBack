@@ -13,10 +13,10 @@ interface dpConfig {
 export function detectDbConfig(): dpConfig {
     if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
         return {
-            host: config.dbHost,
-            user: config.dbUser,
-            password: config.dbPassword,
-            database: config.dbDatabase,
+            host: 'localhost',
+            user: 'root',
+            password: '',
+            database: 'fairapartments',
             namedPlaceholders: true,
             decimalNumbers: true,
         };
