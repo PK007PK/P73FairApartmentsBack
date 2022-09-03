@@ -1,68 +1,153 @@
-import {ApartmentEntity, NewApartmentEntity, SimpleApartmentEntity} from "../types";
+import {PublicApartmentEntity, NewApartmentEntity, FullApartmentEntity} from "../types";
 import {ValidationError} from "../utils/errors";
 import {pool} from "../utils/db";
 import {FieldPacket} from "mysql2";
 import {v4 as uuid} from 'uuid';
 
-type ApartmentRecordResults = [ApartmentEntity[], FieldPacket[]];
+type FullApartmentRecordResults = [FullApartmentEntity[], FieldPacket[]];
+type PublicApartmentRecordResults = [FullApartmentEntity[], FieldPacket[]];
 
-export class ApartmentRecord implements ApartmentEntity {
-    public id: string;
-    public name: string;
-    public mainImgLink?: string;
-    public descriptionShort: string;
-    public price: number;
-    public lat: number;
-    public lon: number;
+export class ApartmentRecord implements FullApartmentEntity {
+    id: string;
+    name: string;
+    adress: string;
+    status: number;
+    mainImgLink?: string;
+    owner?: string;
+    currentTenant?: string;
+    currentAgreement?: string;
+    lat?: number;
+    lon?: number;
+    descriptionShort?: string;
+    space?: number;
+    floor?: number;
+    kitchenDesc?: string;
+    roomsDesc?: string;
+    otherSpacesDesc?: string;
+    instalationDesc?: string;
+    administrationCosts?: number;
+    otherCostsDesc?: string;
 
     constructor(obj: NewApartmentEntity) {
         if (!obj.name || obj.name.length > 100) {
             throw new ValidationError('Nazwa apartamentu nie może być pusta, ani przekraczać 100 znaków.');
         }
 
-        if (obj.descriptionShort.length > 1000) {
-            throw new ValidationError('Krótki opis nie może przekraczać 1000 znaków.');
+        if (!obj.adress || obj.adress.length > 100) {
+            throw new ValidationError('Adres nie może być pusty, ani przekraczać 100 znaków.');
         }
 
-        if (obj.price < 0 || obj.price > 9999999) {
-            throw new ValidationError('Cena nie może być mniejsza niż 0 lub większa niż 9 999 999.');
+        if (!obj.status || typeof obj.status !== 'number' ) {
+            throw new ValidationError('Status nie może być pusty i musi być numerem');
         }
 
-         if (typeof obj.lat !== 'number' || typeof obj.lon !== 'number') {
+        if (obj.mainImgLink.length > 150) {
+            throw new ValidationError('Długość linku nie może przekraczać 150 znaków.');
+        }
+
+        if (obj.currentTenant?.length > 30) {
+            throw new ValidationError('Długość identyfikatora najemcy nie może przekraczać 30 znaków.');
+        }
+
+        if (obj.owner?.length > 30) {
+            throw new ValidationError('Długość identyfikatora właściciela nie może przekraczać 30 znaków.');
+        }
+
+        if (typeof obj.lat !== 'number' || typeof obj.lon !== 'number') {
             throw new ValidationError('Nie można zlokalizować ogłoszenia.');
+        }
+
+        if (obj.descriptionShort.length > 255) {
+            throw new ValidationError('Krótki opis nie może przekraczać 255 znaków.');
+        }
+
+        if (typeof obj.space !== 'number' || obj.space < 0) {
+            throw new ValidationError('Powierzchnia musi być liczbą, nie może być mniejsza od zera');
+        }
+
+        if (typeof obj.floor !== 'number' || obj.floor < 0) {
+            throw new ValidationError('Piętro musi być liczbą, nie może być mniejsze od zera');
+        }
+
+        if (obj.kitchenDesc.length > 1000) {
+            throw new ValidationError('Opis kuchni nie może przekraczać 1000 znaków');
+        }
+
+        if (obj.roomsDesc.length > 1000) {
+            throw new ValidationError('Opis pokojów nie może przekraczać 1000 znaków');
+        }
+
+        if (obj.otherSpacesDesc.length > 1000) {
+            throw new ValidationError('Opis pozostałych pomieszczeń nie może przekraczać 1000 znaków');
+        }
+
+        if (obj.instalationDesc.length > 1000) {
+            throw new ValidationError('Opis instalacji nie może przekraczać 1000 znaków');
+        }
+
+        if (typeof obj.administrationCosts !== 'number' || obj.administrationCosts > 9999) {
+            throw new ValidationError('Koszty administracyjne muszą być liczbą i nie mogą być większe niż 9999.');
+        }
+
+        if (obj.instalationDesc.length > 1000) {
+            throw new ValidationError('Opis pozostałych kosztów nie może przekraczać 1000 znaków');
         }
 
         this.id = obj.id;
         this.name = obj.name;
-        this.descriptionShort = obj.descriptionShort;
-        this.price = obj.price;
+        this.adress = obj.adress;
+        this.status = obj.status;
         this.mainImgLink = obj.mainImgLink;
+        this.owner = obj.owner;
+        this.currentTenant = obj.currentTenant;
+        this.currentAgreement = obj.currentAgreement;
         this.lat = obj.lat;
         this.lon = obj.lon;
+        this.descriptionShort = obj.descriptionShort;
+        this.space = obj.space;
+        this.floor = obj.floor;
+        this.kitchenDesc = obj.kitchenDesc;
+        this.roomsDesc = obj.roomsDesc;
+        this.otherSpacesDesc = obj.otherSpacesDesc;
+        this.instalationDesc = obj.instalationDesc;
+        this.administrationCosts = obj.administrationCosts;
+        this.otherCostsDesc = obj.otherCostsDesc;
     }
     
-    static async getOne(id: string): Promise<ApartmentRecord | null> {
-        const [results] = await pool.execute("SELECT * FROM `apartments` WHERE `id` = :id", {
+    static async getOnePublic(id: string): Promise<ApartmentRecord | null> {
+        const [result] = await pool.execute(
+            // "SELECT `name`, `adress`, `status`, `mainImgLink`, `currentTenant`, `currentAgreement`, `lat`, `lon`, `descriptionShort`, `space`, `floor`, `kitchenDesc`, `roomsDesc`, `otherSpacesDesc`, `instalationDesc`, `administrationCosts`, `otherCostsDesc` FROM `apartments` INNER JOIN `apartments-details` ON `apartments`.`id` = `apartments-details`.`id` WHERE `apartments`.`id` = :id", {
+            "SELECT * FROM `apartments` INNER JOIN `apartments-details` ON `apartments`.`id` = `apartments-details`.`id` WHERE `apartments`.`id` = :id", {
             id,
-        }) as ApartmentRecordResults;
-
-        return results.length === 0 ? null : new ApartmentRecord(results[0]);
+            }
+        ) as PublicApartmentRecordResults;
+        return result.length === 0 ? null : new ApartmentRecord(result[0]);
     }
 
-    static async findAll(name: string): Promise<SimpleApartmentEntity[]> {
-        const [results] = await pool.execute("SELECT * FROM `apartments` WHERE `name` LIKE :search", {
-            search: `%${name}%`,
-        }) as ApartmentRecordResults;
+    static async getOneFull(id: string): Promise<ApartmentRecord | null> {
+        const [result] = await pool.execute(
+            "SELECT * FROM `apartments` INNER JOIN `apartments-details` ON `apartments`.`id` = `apartments-details`.`id` INNER JOIN `apartments-restricted` ON `apartments`.`id` = `apartments-restricted`.`id` WHERE `apartments`.`id` = :id", {
+            id,
+            }
+        ) as FullApartmentRecordResults;
+        return result.length === 0 ? null : new ApartmentRecord(result[0]);
+    }
 
-        return results.map(result => {
-            const {
-                id, name, lat, lon, price, descriptionShort, mainImgLink
-            } = result;
+    static async findAll(name: string) {
+    // static async findAll(name: string): Promise<FullApartmentRecordResults[]> {
+        // const [results] = await pool.execute("SELECT * FROM `apartments` WHERE `name` LIKE :search", {
+        //     search: `%${name}%`,
+        // }) as ApartmentRecordResults;
 
-            return {
-                id, name, lat, lon, price, descriptionShort, mainImgLink
-            };
-        });
+        // return results.map(result => {
+        //     const {
+        //         id, name, lat, lon, descriptionShort, mainImgLink
+        //     } = result;
+
+        //     return {
+        //         id, name, lat, lon, descriptionShort, mainImgLink
+        //     };
+        // });
     }
 
     async insert(): Promise<void> {
@@ -72,7 +157,6 @@ export class ApartmentRecord implements ApartmentEntity {
             throw new Error('Cannot insert something that is already inserted!');
         }
 
-        await pool.execute("INSERT INTO `apartments`(`id`, `name`, `descriptionShort`, `price`, `mainImgLink`, `lat`, `lon`) VALUES(:id, :name, :descriptionShort, :price, :mainImgLink, :lat, :lon)", this);
     }
 
     async edit(): Promise<void> {
@@ -80,7 +164,6 @@ export class ApartmentRecord implements ApartmentEntity {
             id: this.id,
             name: this.name,
             descriptionShort: this.descriptionShort,
-            price: this.price,
             mainImgLink: this.mainImgLink,
             lat: this.lat,
             lon: this.lon,
@@ -96,3 +179,4 @@ export class ApartmentRecord implements ApartmentEntity {
         }
     }
 }
+

@@ -10,7 +10,7 @@ export const apartmentRouter = Router()
     })
 
     .get('/:id', async (req: Request, res: Response) => {
-        const apartment = await ApartmentRecord.getOne(req.params.id);
+        const apartment = await ApartmentRecord.getOnePublic(req.params.id);
 
         if (!apartment) {
             throw new ValidationError('No such apartment');
@@ -38,7 +38,7 @@ export const apartmentRouter = Router()
             throw new ValidationError('Id was not sent');
         }
 
-        const apartment = await ApartmentRecord.getOne(id);
+        const apartment = await ApartmentRecord.getOnePublic(id);
 
         if (!apartment) {
             throw new ValidationError('No such apartment');
