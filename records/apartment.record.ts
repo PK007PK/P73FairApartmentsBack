@@ -5,20 +5,20 @@ import {FieldPacket} from "mysql2";
 import {v4 as uuid} from 'uuid';
 
 type FullApartmentRecordResults = [FullApartmentEntity[], FieldPacket[]];
-type PublicApartmentRecordResults = [FullApartmentEntity[], FieldPacket[]];
+type PublicApartmentRecordResults = [PublicApartmentEntity[], FieldPacket[]];
 
 export class ApartmentRecord implements FullApartmentEntity {
     id: string;
     name: string;
-    adress: string;
-    status: number;
-    mainImgLink?: string;
+    adress?: string;
+    status?: number;
+    mainImgLink: string;
     owner?: string;
     currentTenant?: string;
     currentAgreement?: string;
-    lat?: number;
-    lon?: number;
-    descriptionShort?: string;
+    lat: number;
+    lon: number;
+    descriptionShort: string;
     space?: number;
     floor?: number;
     kitchenDesc?: string;
@@ -116,7 +116,6 @@ export class ApartmentRecord implements FullApartmentEntity {
     
     static async getOnePublic(id: string): Promise<ApartmentRecord | null> {
         const [result] = await pool.execute(
-            // "SELECT `name`, `adress`, `status`, `mainImgLink`, `currentTenant`, `currentAgreement`, `lat`, `lon`, `descriptionShort`, `space`, `floor`, `kitchenDesc`, `roomsDesc`, `otherSpacesDesc`, `instalationDesc`, `administrationCosts`, `otherCostsDesc` FROM `apartments` INNER JOIN `apartments-details` ON `apartments`.`id` = `apartments-details`.`id` WHERE `apartments`.`id` = :id", {
             "SELECT * FROM `apartments` INNER JOIN `apartments-details` ON `apartments`.`id` = `apartments-details`.`id` WHERE `apartments`.`id` = :id", {
             id,
             }
@@ -133,21 +132,20 @@ export class ApartmentRecord implements FullApartmentEntity {
         return result.length === 0 ? null : new ApartmentRecord(result[0]);
     }
 
-    static async findAll(name: string) {
-    // static async findAll(name: string): Promise<FullApartmentRecordResults[]> {
-        // const [results] = await pool.execute("SELECT * FROM `apartments` WHERE `name` LIKE :search", {
-        //     search: `%${name}%`,
-        // }) as ApartmentRecordResults;
+    static async findAll(name: string): Promise<PublicApartmentEntity[]> {
+        const [results] = await pool.execute("SELECT * FROM `apartments` WHERE `name` LIKE :search", {
+            search: `%${name}%`,
+        }) as PublicApartmentRecordResults;
 
-        // return results.map(result => {
-        //     const {
-        //         id, name, lat, lon, descriptionShort, mainImgLink
-        //     } = result;
+        return results.map(result => {
+            const {
+                id, name, lat, lon, descriptionShort, mainImgLink
+            } = result;
 
-        //     return {
-        //         id, name, lat, lon, descriptionShort, mainImgLink
-        //     };
-        // });
+            return {
+                id, name, lat, lon, descriptionShort, mainImgLink
+            };
+        });
     }
 
     async insert(): Promise<void> {
@@ -156,7 +154,7 @@ export class ApartmentRecord implements FullApartmentEntity {
         } else {
             throw new Error('Cannot insert something that is already inserted!');
         }
-
+        //todo
     }
 
     async edit(): Promise<void> {
