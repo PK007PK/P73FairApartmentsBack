@@ -154,22 +154,18 @@ export class ApartmentRecord implements FullApartmentEntity {
         } else {
             throw new Error('Cannot insert something that is already inserted!');
         }
-        //todo
+        // await pool.execute("INSERT INTO `apartments`(`id`, `name`, `descriptionShort`, `price`, `mainImgLink`, `lat`, `lon`) VALUES(:id, :name, :descriptionShort, :price, :mainImgLink, :lat, :lon)", this);
+        await pool.execute("INSERT INTO `apartments`(`id`, `name`, `adress`, `status`, `mainImgLink`) VALUES(:id, :name, :adress, :status, :mainImgLink); INSERT INTO `apartments-details`(`id`, `lat`, `lon`, `descriptionShort`, `space`, `floor`, `kitchenDesc`, `roomsDesc`, 'otherSpacesDesc', 'instalationDesc', 'administrationCosts', 'otherCostsDesc') VALUES(:id, :lat, :lon, :descriptionShort, :space, :floor, :kitchenDesc, :roomsDesc, :otherSpacesDesc, :instalationDesc, :administrationCosts, :otherCostsDesc)", this);
     }
 
     async edit(): Promise<void> {
-        await pool.execute("UPDATE `apartments` SET `name` = :name, `descriptionShort` = :descriptionShort, `price` = :price, `mainImgLink` = :mainImgLink, `lat` = :lat, `lon` = :lon WHERE `id` = :id", {
-            id: this.id,
-            name: this.name,
-            descriptionShort: this.descriptionShort,
-            mainImgLink: this.mainImgLink,
-            lat: this.lat,
-            lon: this.lon,
-        });
+        // await pool.execute("UPDATE `apartments` SET `name` = :name, `descriptionShort` = :descriptionShort, `price` = :price, `mainImgLink` = :mainImgLink, `lat` = :lat, `lon` = :lon WHERE `id` = :id", {
+        await pool.execute("UPDATE `apartments` SET `name` = :name, `adress` = :adress, `status` = :status, `mainImgLink` = :mainImgLink, WHERE `id` = :id; UPDATE `apartments-details` SET `lat` = :lat, `lon` = :lon, `descriptionShort` = :descriptionShort, `space` = :space, `floor` = :floor, `kitchenDesc` = :kitchenDesc, `roomsDesc` = :roomsDesc, `otherSpacesDesc` = :otherSpacesDesc, `instalationDesc` = :instalationDesc, `administrationCosts` = :administrationCosts, `otherCostsDesc` = :otherCostsDesc  WHERE `id` = :id", this
+        );
     }
 
     async delete(): Promise<{}> {
-        await pool.execute("DELETE FROM `apartments` WHERE `id` = :id", {
+        await pool.execute("DELETE FROM `apartments` WHERE `id` = :id; DELETE FROM `apartments-details` WHERE `id` = :id", {
             id: this.id,
         });
         return {
