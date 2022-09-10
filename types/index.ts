@@ -1,2 +1,3 @@
 export * from './apartment';
-export * from './ad';
+export * from './owner';
+export * from './tenant';
