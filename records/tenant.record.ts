@@ -22,11 +22,11 @@ export class TenantRecord implements TenantEntity {
             throw new ValidationError('Musisz podać email najemcy, nie nie może on przekraczać 30 znaków');
         }
 
-        if (!obj.phone || obj.phone.length > 30) {
+        if (!obj.phone || obj.phone.length > 15) {
             throw new ValidationError('Musisz podać email najemcy, nie nie może on przekraczać 30 znaków');
         }
 
-        if (obj.nameandsurname2 || obj.nameandsurname.length > 30) {
+        if (obj.nameandsurname2 && obj.nameandsurname2.length > 30) {
             throw new ValidationError('Jeżeli istnieje także drugi najemca, podaj jego imię i nazwisko (max 30 znaków)');
         }
 
@@ -34,7 +34,7 @@ export class TenantRecord implements TenantEntity {
             throw new ValidationError('Jeżeli istnieje także drugi najemca, podaj jego email (max 30 znaków)');
         }
 
-        if (obj.nameandsurname2 && obj.phone2.length > 30) {
+        if (obj.nameandsurname2 && obj.phone2.length > 15) {
             throw new ValidationError('Jeżeli istnieje także drugi najemca, podaj jego telefon (max 30 znaków)');
         }
 
@@ -71,8 +71,11 @@ export class TenantRecord implements TenantEntity {
         });
     }
 
-    async insert(): Promise<void> {
+    async insert(): Promise<{isInserted: boolean}> {
         await pool.execute("INSERT INTO `tenants`(`nameandsurname`, `email`, `phone`, `nameandsurname2`, `email2`, `phone2`) VALUES(:nameandsurname, :email, :phone, :nameandsurname2, :email2, :phone2)", this);
+        return {
+            isInserted: true,
+        }
     }
 
     async edit(): Promise<void> {
@@ -80,7 +83,7 @@ export class TenantRecord implements TenantEntity {
         );
     }
 
-    async delete(): Promise<{}> {
+    async delete(): Promise<{isDeleted: boolean}> {
         await pool.execute("DELETE FROM `tenants` WHERE `nameandsurname` = :nameandsurname", {
             nameandsurname: this.nameandsurname,
         });
