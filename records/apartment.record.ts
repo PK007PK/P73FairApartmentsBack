@@ -148,7 +148,7 @@ export class ApartmentRecord implements FullApartmentEntity {
         });
     }
 
-    async insert(): Promise<void> {
+    async insert(): Promise<{isInserted: boolean, id: string}> {
         if (!this.id) {
             this.id = uuid();
         } else {
@@ -156,7 +156,12 @@ export class ApartmentRecord implements FullApartmentEntity {
         }
         await pool.execute("INSERT INTO `apartments`(`id`, `name`, `adress`, `status`, `mainImgLink`) VALUES(:id, :name, :adress, :status, :mainImgLink)", this);
         await pool.execute("INSERT INTO `apartments-details`(`id`, `lat`, `lon`, `descriptionShort`, `space`, `floor`, `kitchenDesc`, `roomsDesc`, `otherSpacesDesc`, `instalationDesc`, `administrationCosts`, `otherCostsDesc`) VALUES(:id, :lat, :lon, :descriptionShort, :space, :floor, :kitchenDesc, :roomsDesc, :otherSpacesDesc, :instalationDesc, :administrationCosts, :otherCostsDesc)", this);
-        await pool.execute("INSERT INTO `apartments-RESTRICTED`(`id`, `owner`, `currentTenant`, `currentAgreement`) VALUES(:id, :owner, :currentTenant, :currentAgreement)", this);
+        await pool.execute("INSERT INTO `apartments-restricted`(`id`, `owner`, `currentTenant`) VALUES(:id, :owner, :currentTenant)", this);
+        
+        return {
+            isInserted: true,
+            id: this.id,
+        }
     }
 
     async edit(): Promise<void> {
@@ -164,8 +169,11 @@ export class ApartmentRecord implements FullApartmentEntity {
         );
     }
 
-    async delete(): Promise<{}> {
-        await pool.execute("DELETE FROM `apartments` WHERE `id` = :id; DELETE FROM `apartments-details` WHERE `id` = :id", {
+    async delete(): Promise<{isDeleted: boolean}> {
+        await pool.execute("DELETE FROM `apartments-restricted` WHERE `id` = :id", {
+            id: this.id,
+        });
+        await pool.execute("DELETE FROM `apartments` WHERE `id` = :id", {
             id: this.id,
         });
         return {

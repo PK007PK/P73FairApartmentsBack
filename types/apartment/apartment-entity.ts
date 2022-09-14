@@ -1,15 +1,3 @@
-// id, name, lat, lon, descriptionShort, mainImgLink
-
-// id: string;
-// name: string;
-// adress: string;
-// status: number;
-// mainImgLink?: string;
-// lat?: number;
-// lon?: number;
-
-// export interface ApartmentBasics 
-
 export interface PublicApartmentEntity {
     id: string;
     name: string;
