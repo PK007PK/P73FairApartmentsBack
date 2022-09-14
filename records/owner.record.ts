@@ -19,8 +19,8 @@ export class OwnerRecord implements OwnerEntity {
             throw new ValidationError('Musisz podać email właściciela, nie nie może on przekraczać 30 znaków');
         }
 
-        if (!obj.phone || obj.phone.length > 30) {
-            throw new ValidationError('Musisz podać email właściciela, nie nie może on przekraczać 30 znaków');
+        if (!obj.phone || obj.phone.length > 15) {
+            throw new ValidationError('Musisz podać telefon właściciela, nie nie może on przekraczać 15 znaków');
         }
 
         this.nameandsurname = obj.nameandsurname;
@@ -53,8 +53,11 @@ export class OwnerRecord implements OwnerEntity {
         });
     }
 
-    async insert(): Promise<void> {
+    async insert(): Promise<{isInserted: boolean}> {
         await pool.execute("INSERT INTO `owners`(`nameandsurname`, `email`, `phone`) VALUES(:nameandsurname, :email, :phone)", this);
+        return {
+            isInserted: true,
+        }
     }
 
     async edit(): Promise<void> {
@@ -62,7 +65,7 @@ export class OwnerRecord implements OwnerEntity {
         );
     }
 
-    async delete(): Promise<{}> {
+    async delete(): Promise<{isDeleted: boolean}> {
         await pool.execute("DELETE FROM `owners` WHERE `nameandsurname` = :nameandsurname", {
             nameandsurname: this.nameandsurname,
         });
