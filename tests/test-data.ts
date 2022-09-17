@@ -44,3 +44,24 @@ export const defTestApartmentData: NewApartmentEntity = {
     owner: defTestOwner.nameandsurname,
     currentTenant: defTestTenant.nameandsurname,
 };
+
+export const defTestApartmentData2: NewApartmentEntity = {
+    name: 'Test apartment2',
+    adress: 'Test address2',
+    status: 2,
+    mainImgLink: "https://images.unsplash.com/photo-1480074568708-e7…fHx8fGVufDB8fHx8&auto=format&fit=crop&w=2074&q=802",
+    lat: 12.5,
+    lon: 13.5,
+    descriptionShort: "DescriptionShort. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed facilisis rhoncus congue. Duis lectus felis, mattis sit amet iaculis eu, convallis ac purus. Curabitur ultrices mauris quam, eu rutrum sapien vestibulum vel2.",
+    space: 121,
+    floor: 6,
+    kitchenDesc: "KitchenDesc. Lorem ipsum door sit amet, consectetur adipiscing elit. Sed facilisis rhoncus congue. Duis lectus felis, mattis sit amet iaculis eu, convallis ac purus. Curabitur ultrices mauris quam, eu rutrum sapien vestibulum vel. Sed quis posuere libero. Suspendisse sed lorem eu eros ultricies dapibus sit amet at augue. Nunc lacinia mauris vel massa pulvinar dictum. Nulla facilisi. Nam sit amet blandit justo. Nulla facilisi2.",
+    roomsDesc: "RoomsDesc. Lorem ipsum door sit amet, consectetur adipiscing elit. Sed facilisis rhoncus congue. Duis lectus felis, mattis sit amet iaculis eu, convallis ac purus. Curabitur ultrices mauris quam, eu rutrum sapien vestibulum vel. Sed quis posuere libero. Suspendisse sed lorem eu eros ultricies dapibus sit amet at augue. Nunc lacinia mauris vel massa pulvinar dictum. Nulla facilisi. Nam sit amet blandit justo. Nulla facilisi2.",
+    otherSpacesDesc: "OtherSpacesDesc. Lorm ipsum dolor sit amet, consectetur adipiscing elit. Sed facilisis rhoncus congue. Duis lectus felis, mattis sit amet iaculis eu, convallis ac purus. Curabitur ultrices mauris quam, eu rutrum sapien vestibulum vel. Sed quis posuere libero. Suspendisse sed lorem eu eros ultricies dapibus sit amet at augue. Nunc lacinia mauris vel massa pulvinar dictum. Nulla facilisi. Nam sit amet blandit justo. Nulla facilisi2.",
+    instalationDesc: "InstalationDesc. Lorm ipsum dolor sit amet, consectetur adipiscing elit. Sed facilisis rhoncus congue. Duis lectus felis, mattis sit amet iaculis eu, convallis ac purus. Curabitur ultrices mauris quam, eu rutrum sapien vestibulum vel. Sed quis posuere libero. Suspendisse sed lorem eu eros ultricies dapibus sit amet at augue. Nunc lacinia mauris vel massa pulvinar dictum. Nulla facilisi. Nam sit amet blandit justo. Nulla facilisi2.",
+    administrationCosts: 150,
+    otherCostsDesc: "OtherCostsDesc. Lorm ipsum dolor sit amet, consectetur adipiscing elit. Sed facilisis rhoncus congue. Duis lectus felis, mattis sit amet iaculis eu, convallis ac purus. Curabitur ultrices mauris quam, eu rutrum sapien vestibulum vel. Sed quis posuere libero. Suspendisse sed lorem eu eros ultricies dapibus sit amet at augue. Nunc lacinia mauris vel massa pulvinar dictum. Nulla facilisi. Nam sit amet blandit justo. Nulla facilisi2.",
+    owner: defTestOwner.nameandsurname,
+    currentTenant: defTestTenant.nameandsurname,
+    currentAgreement: '121212',
+};

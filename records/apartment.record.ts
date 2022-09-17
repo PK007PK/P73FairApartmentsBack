@@ -154,30 +154,46 @@ export class ApartmentRecord implements FullApartmentEntity {
         } else {
             throw new Error('Cannot insert something that is already inserted!');
         }
-        await pool.execute("INSERT INTO `apartments`(`id`, `name`, `adress`, `status`, `mainImgLink`) VALUES(:id, :name, :adress, :status, :mainImgLink)", this);
+        const [result, ] = await pool.execute("INSERT INTO `apartments`(`id`, `name`, `adress`, `status`, `mainImgLink`) VALUES(:id, :name, :adress, :status, :mainImgLink)", this);
         await pool.execute("INSERT INTO `apartments-details`(`id`, `lat`, `lon`, `descriptionShort`, `space`, `floor`, `kitchenDesc`, `roomsDesc`, `otherSpacesDesc`, `instalationDesc`, `administrationCosts`, `otherCostsDesc`) VALUES(:id, :lat, :lon, :descriptionShort, :space, :floor, :kitchenDesc, :roomsDesc, :otherSpacesDesc, :instalationDesc, :administrationCosts, :otherCostsDesc)", this);
         await pool.execute("INSERT INTO `apartments-restricted`(`id`, `owner`, `currentTenant`) VALUES(:id, :owner, :currentTenant)", this);
         
+        const {affectedRows}: any = result;
+
         return {
-            isInserted: true,
+            isInserted: Boolean(affectedRows),
             id: this.id,
         }
     }
 
-    async edit(): Promise<void> {
-        await pool.execute("UPDATE `apartments` SET `name` = :name, `adress` = :adress, `status` = :status, `mainImgLink` = :mainImgLink, WHERE `id` = :id; UPDATE `apartments-details` SET `lat` = :lat, `lon` = :lon, `descriptionShort` = :descriptionShort, `space` = :space, `floor` = :floor, `kitchenDesc` = :kitchenDesc, `roomsDesc` = :roomsDesc, `otherSpacesDesc` = :otherSpacesDesc, `instalationDesc` = :instalationDesc, `administrationCosts` = :administrationCosts, `otherCostsDesc` = :otherCostsDesc  WHERE `id` = :id", this
-        );
+    async edit(): Promise<{isEdited: boolean}> {
+        if (!this.id) {
+            throw new Error('Cannot edit something that has no id!');
+        }
+
+        await pool.execute("UPDATE `apartments-restricted` SET `owner` = :owner, `currentTenant` = :currentTenant, `currentAgreement` = :currentAgreement  WHERE `id` = :id", this);
+        await pool.execute("UPDATE `apartments-details` SET `lat` = :lat, `lon` = :lon, `descriptionShort` = :descriptionShort, `space` = :space, `floor` = :floor, `kitchenDesc` = :kitchenDesc, `roomsDesc` = :roomsDesc, `otherSpacesDesc` = :otherSpacesDesc, `instalationDesc` = :instalationDesc, `administrationCosts` = :administrationCosts, `otherCostsDesc` = :otherCostsDesc  WHERE `id` = :id", this);
+        const [result,] = await pool.execute("UPDATE `apartments` SET `name` = :name, `adress` = :adress, `status` = :status, `mainImgLink` = :mainImgLink WHERE `id` = :id", this);
+
+        const {affectedRows}: any = result;
+    
+        return {
+            isEdited: Boolean(affectedRows),
+        }
     }
 
     async delete(): Promise<{isDeleted: boolean}> {
         await pool.execute("DELETE FROM `apartments-restricted` WHERE `id` = :id", {
             id: this.id,
         });
-        await pool.execute("DELETE FROM `apartments` WHERE `id` = :id", {
+        const [result,] = await pool.execute("DELETE FROM `apartments` WHERE `id` = :id", {
             id: this.id,
         });
+
+        const {affectedRows}: any = result;
+        
         return {
-            isDeleted: true,
+            isDeleted: Boolean(affectedRows),
         }
     }
 }
