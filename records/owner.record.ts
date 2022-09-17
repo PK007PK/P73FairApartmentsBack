@@ -54,23 +54,31 @@ export class OwnerRecord implements OwnerEntity {
     }
 
     async insert(): Promise<{isInserted: boolean}> {
-        await pool.execute("INSERT INTO `owners`(`nameandsurname`, `email`, `phone`) VALUES(:nameandsurname, :email, :phone)", this);
+        const [result, ] = await pool.execute("INSERT INTO `owners`(`nameandsurname`, `email`, `phone`) VALUES(:nameandsurname, :email, :phone)", this);
+        const {affectedRows}: any = result;
         return {
-            isInserted: true,
+            isInserted: Boolean(affectedRows),
         }
     }
 
-    async edit(): Promise<void> {
-        await pool.execute("UPDATE `owners` SET `phone` = :phone, `email` = :email, WHERE `nameandsurname` = :nameandsurname", this
+    async edit(): Promise<{isEdited: boolean}> {
+        const [result, ] = await pool.execute("UPDATE `owners` SET `phone` = :phone, `email` = :email, WHERE `nameandsurname` = :nameandsurname", this
         );
+        const {affectedRows}: any = result;
+        return {
+            isEdited: Boolean(affectedRows),
+        }
     }
 
     async delete(): Promise<{isDeleted: boolean}> {
-        await pool.execute("DELETE FROM `owners` WHERE `nameandsurname` = :nameandsurname", {
+        const [result,] = await pool.execute("DELETE FROM `owners` WHERE `nameandsurname` = :nameandsurname", {
             nameandsurname: this.nameandsurname,
         });
+        
+        const {affectedRows}: any = result;
+        
         return {
-            isDeleted: true,
+            isDeleted: Boolean(affectedRows),
         }
     }
 }
