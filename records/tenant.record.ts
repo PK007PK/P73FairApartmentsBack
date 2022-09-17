@@ -72,23 +72,28 @@ export class TenantRecord implements TenantEntity {
     }
 
     async insert(): Promise<{isInserted: boolean}> {
-        await pool.execute("INSERT INTO `tenants`(`nameandsurname`, `email`, `phone`, `nameandsurname2`, `email2`, `phone2`) VALUES(:nameandsurname, :email, :phone, :nameandsurname2, :email2, :phone2)", this);
+        const [result,] = await pool.execute("INSERT INTO `tenants`(`nameandsurname`, `email`, `phone`, `nameandsurname2`, `email2`, `phone2`) VALUES(:nameandsurname, :email, :phone, :nameandsurname2, :email2, :phone2)", this);
+        const {affectedRows}: any = result;
         return {
-            isInserted: true,
+            isInserted: Boolean(affectedRows),
         }
     }
 
-    async edit(): Promise<void> {
-        await pool.execute("UPDATE `tenants` SET `phone` = :phone, `email` = :email, `nameandsurname2` = :nameandsurname2, `phone2` = :phone2, `email2` = :email2, WHERE `nameandsurname` = :nameandsurname", this
-        );
+    async edit(): Promise<{isEdited: boolean}> {
+        const [result, ] = await pool.execute("UPDATE `tenants` SET `phone` = :phone, `email` = :email, `nameandsurname2` = :nameandsurname2, `phone2` = :phone2, `email2` = :email2, WHERE `nameandsurname` = :nameandsurname", this);
+        const {affectedRows}: any = result;
+        return {
+            isEdited: Boolean(affectedRows),
+        }
     }
 
     async delete(): Promise<{isDeleted: boolean}> {
-        await pool.execute("DELETE FROM `tenants` WHERE `nameandsurname` = :nameandsurname", {
+        const [result,] = await pool.execute("DELETE FROM `tenants` WHERE `nameandsurname` = :nameandsurname", {
             nameandsurname: this.nameandsurname,
         });
+        const {affectedRows}: any = result;
         return {
-            isDeleted: true,
+            isDeleted: Boolean(affectedRows),
         }
     }
 }
