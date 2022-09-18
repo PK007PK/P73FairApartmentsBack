@@ -1,6 +1,5 @@
 import { TenantRecord } from "../records/tenant.record";
-import { defTestTenant2 } from "./test-data";
-
+import { defTestTenant2 } from "../tests/test-data";
 
 test('TenantRecord is created correctly', () => {
     const tenant = new TenantRecord(defTestTenant2);

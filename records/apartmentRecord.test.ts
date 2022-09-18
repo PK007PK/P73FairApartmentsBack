@@ -1,7 +1,7 @@
 import {ApartmentRecord} from "../records/apartment.record";
 import { OwnerRecord } from "../records/owner.record";
 import { TenantRecord } from "../records/tenant.record";
-import { defTestApartmentData, defTestApartmentData2, defTestOwner, defTestTenant } from "./test-data";
+import { defTestApartmentData, defTestApartmentData2, defTestOwner, defTestTenant } from "../tests/test-data";
 
 let idForTest: string;
 

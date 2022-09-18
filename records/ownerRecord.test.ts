@@ -1,5 +1,5 @@
 import { OwnerRecord } from "../records/owner.record";
-import { defTestOwner2 } from "./test-data";
+import { defTestOwner2 } from "../tests/test-data";
 
 test('OwnerRecord is created correctly', () => {
     const owner = new OwnerRecord(defTestOwner2);
