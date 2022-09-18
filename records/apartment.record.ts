@@ -133,7 +133,7 @@ export class ApartmentRecord implements FullApartmentEntity {
     }
 
     static async findAll(name: string): Promise<PublicApartmentEntity[]> {
-        const [results] = await pool.execute("SELECT * FROM `apartments` WHERE `name` LIKE :search", {
+        const [results] = await pool.execute("SELECT * FROM `apartments` LEFT JOIN `apartments-details` ON `apartments`.`id` = `apartments-details`.`id` WHERE `name` LIKE :search", {
             search: `%${name}%`,
         }) as PublicApartmentRecordResults;
 

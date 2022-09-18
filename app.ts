@@ -11,8 +11,9 @@ import {config} from "./config/config";
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3001',
+    origin: config.corsOrigin,
 }));
+
 app.use(json());
 app.use(rateLimit({
     windowMs: 5 * 60 * 1000, // 15 minutes
