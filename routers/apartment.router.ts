@@ -19,6 +19,16 @@ export const apartmentRouter = Router()
         res.json(apartment);
     })
 
+    .get('/full/:id', async (req: Request, res: Response) => {
+        const apartment = await ApartmentRecord.getOneFull(req.params.id);
+
+        if (!apartment) {
+            throw new ValidationError('No such apartment');
+        }
+
+        res.json(apartment);
+    })
+
     .post('/add/', async (req: Request, res: Response) => {
         const apartment = new ApartmentRecord(req.body);
         await apartment.insert();
@@ -44,9 +54,7 @@ export const apartmentRouter = Router()
             throw new ValidationError('No such apartment');
         }
 
-        const deleteStatus = await apartment.delete();
-        res.json(deleteStatus);
-
-        res.end();
+        const isDeleted = await apartment.delete();
+        res.json(isDeleted);
     });
 ;
