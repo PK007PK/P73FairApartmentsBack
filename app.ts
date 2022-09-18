@@ -4,6 +4,8 @@ import 'express-async-errors';
 import {handleError} from "./utils/errors";
 import rateLimit from 'express-rate-limit'
 import { apartmentRouter } from "./routers/apartment.router";
+import { ownerRouter } from "./routers/owner.router";
+import { tenantRouter } from "./routers/tenant.router";
 import {config} from "./config/config";
 
 const app = express();
@@ -20,6 +22,8 @@ app.use(rateLimit({
 const router = Router();
 
 router.use('/apartment', apartmentRouter);
+router.use('/owner', ownerRouter);
+router.use('/tenant', tenantRouter);
 
 app.use('/api', router);
 
