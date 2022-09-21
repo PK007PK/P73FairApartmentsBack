@@ -12,6 +12,7 @@ interface dpConfig {
 
 export function detectDbConfig(): dpConfig {
     if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+        console.log('Local db');
         return {
             host: 'localhost',
             user: 'root',
