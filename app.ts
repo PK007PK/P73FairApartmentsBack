@@ -11,7 +11,7 @@ import {config} from "./config/config";
 const app = express();
 
 app.use(cors({
-    origin: config.corsOrigin,
+    origin: 'http://localhost:8000',
 }));
 
 app.use(json());
