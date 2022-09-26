@@ -11,7 +11,7 @@ import {config} from "./config/config";
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:8000',
+    origin: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://fairapartments.netlify.app',
 }));
 
 app.use(json());
